@@ -20,7 +20,7 @@ A cloud-deployed WhatsApp bot built with Python, Flask, Twilio, and Render. It r
 
 ## ✅ How to Run Locally
 1. Clone the project:
-git clone https://github.com/Malyaj Naiwal/whatsapp-bot.git
+git clone https://github.com/MalyajNaiwal/whatsapp-bot.git
 cd whatsapp-bot
 
 2. Create a virtual environment:
