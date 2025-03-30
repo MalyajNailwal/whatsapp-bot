@@ -1,0 +1,16 @@
+Truck,Tire,Pressure,Tread,Inflation System,Installed,Fuel Efficiency,Load,Distance Today,Engine Hours,Location,Heading To,ETA,Last Service,Next Service,Status
+Truck_100,All-Weather (ID: T_980),105 PSI,Good,Auto Mode,Jan 10, 2025,5.0 km/l,8000 kg,200 km,5.0 hrs,Navi Mumbai,Pune,1 hr 20 mins,Mar 10, 2025,Apr 5, 2025,All systems normal ✅
+Truck_101,All-Weather (ID: T_981),106 PSI,Average,Auto Mode,Jan 11, 2025,5.1 km/l,8050 kg,203 km,5.1 hrs,Navi Mumbai,Pune,2 hr 25 mins,Mar 11, 2025,Apr 6, 2025,All systems normal ✅
+Truck_102,All-Weather (ID: T_982),107 PSI,Good,Auto Mode,Jan 12, 2025,5.2 km/l,8100 kg,206 km,5.2 hrs,Navi Mumbai,Pune,1 hr 30 mins,Mar 12, 2025,Apr 7, 2025,All systems normal ✅
+Truck_103,All-Weather (ID: T_983),108 PSI,Average,Auto Mode,Jan 13, 2025,5.0 km/l,8150 kg,209 km,5.3 hrs,Navi Mumbai,Pune,2 hr 35 mins,Mar 13, 2025,Apr 8, 2025,All systems normal ✅
+Truck_104,All-Weather (ID: T_984),109 PSI,Good,Auto Mode,Jan 14, 2025,5.1 km/l,8200 kg,212 km,5.4 hrs,Navi Mumbai,Pune,1 hr 40 mins,Mar 14, 2025,Apr 9, 2025,All systems normal ✅
+Truck_105,All-Weather (ID: T_985),105 PSI,Average,Auto Mode,Jan 15, 2025,5.2 km/l,8250 kg,215 km,5.5 hrs,Navi Mumbai,Pune,2 hr 45 mins,Mar 15, 2025,Apr 10, 2025,All systems normal ✅
+Truck_106,All-Weather (ID: T_986),106 PSI,Good,Auto Mode,Jan 16, 2025,5.0 km/l,8300 kg,218 km,5.6 hrs,Navi Mumbai,Pune,1 hr 50 mins,Mar 16, 2025,Apr 11, 2025,All systems normal ✅
+Truck_107,All-Weather (ID: T_987),107 PSI,Average,Auto Mode,Jan 17, 2025,5.1 km/l,8350 kg,221 km,5.7 hrs,Navi Mumbai,Pune,2 hr 15 mins,Mar 17, 2025,Apr 12, 2025,All systems normal ✅
+Truck_108,All-Weather (ID: T_988),108 PSI,Good,Auto Mode,Jan 18, 2025,5.2 km/l,8400 kg,224 km,5.8 hrs,Navi Mumbai,Pune,1 hr 25 mins,Mar 18, 2025,Apr 13, 2025,All systems normal ✅
+Truck_109,All-Weather (ID: T_989),109 PSI,Average,Auto Mode,Jan 19, 2025,5.0 km/l,8450 kg,227 km,5.9 hrs,Navi Mumbai,Pune,2 hr 35 mins,Mar 19, 2025,Apr 14, 2025,All systems normal ✅
+Truck_110,All-Weather (ID: T_9810),105 PSI,Good,Auto Mode,Jan 20, 2025,5.1 km/l,8500 kg,230 km,6.0 hrs,Navi Mumbai,Pune,1 hr 35 mins,Mar 20, 2025,Apr 15, 2025,All systems normal ✅
+Truck_111,All-Weather (ID: T_9811),106 PSI,Average,Auto Mode,Jan 21, 2025,5.2 km/l,8550 kg,233 km,6.1 hrs,Navi Mumbai,Pune,2 hr 45 mins,Mar 21, 2025,Apr 16, 2025,All systems normal ✅
+Truck_112,All-Weather (ID: T_9812),107 PSI,Good,Auto Mode,Jan 22, 2025,5.0 km/l,8600 kg,236 km,6.2 hrs,Navi Mumbai,Pune,1 hr 45 mins,Mar 22, 2025,Apr 17, 2025,All systems normal ✅
+Truck_113,All-Weather (ID: T_9813),108 PSI,Average,Auto Mode,Jan 23, 2025,5.1 km/l,8650 kg,239 km,6.3 hrs,Navi Mumbai,Pune,2 hr 55 mins,Mar 23, 2025,Apr 18, 2025,All systems normal ✅
+Truck_114,All-Weather (ID: T_9814),109 PSI,Good,Auto Mode,Jan 24, 2025,5.2 km/l,8700 kg,242 km,6.4 hrs,Navi Mumbai,Pune,1 hr 55 mins,Mar 24, 2025,Apr 19, 2025,All systems normal ✅
