@@ -1,16 +1,16 @@
 Truck,Tire,Pressure,Tread,Inflation System,Installed,Fuel Efficiency,Load,Distance Today,Engine Hours,Location,Heading To,ETA,Last Service,Next Service,Status
-Truck_100,All-Weather (ID: T_980),109 PSI,Worn,Auto Mode,"Jan 10, 2025",5.1 km/l,8535 kg,184 km,4.8 hrs,Navi Mumbai,Pune,2 hr 45 mins,"Mar 10, 2025","Apr 05, 2025",Low pressure alert ⚠️
-Truck_101,All-Weather (ID: T_981),102 PSI,Worn,Auto Mode,"Jan 11, 2025",4.7 km/l,8368 kg,220 km,4.8 hrs,Haryana,Pune,1 hr 30 mins,"Mar 11, 2025","Apr 06, 2025",Low pressure alert ⚠️
-Truck_102,All-Weather (ID: T_982),120 PSI,Worn,Auto Mode,"Jan 12, 2025",5.2 km/l,8603 kg,204 km,6.6 hrs,Pune,Pune,2 hr 25 mins,"Mar 12, 2025","Apr 07, 2025",All systems normal ✅
-Truck_103,All-Weather (ID: T_983),106 PSI,Worn,Auto Mode,"Jan 13, 2025",5.2 km/l,8618 kg,180 km,5.2 hrs,Navi Mumbai,Pune,2 hr 25 mins,"Mar 13, 2025","Apr 08, 2025",Low pressure alert ⚠️
-Truck_104,All-Weather (ID: T_984),111 PSI,Average,Auto Mode,"Jan 14, 2025",5.9 km/l,7626 kg,206 km,6.1 hrs,Haryana,Pune,1 hr 25 mins,"Mar 14, 2025","Apr 09, 2025",Service overdue ❌
-Truck_105,All-Weather (ID: T_985),114 PSI,Worn,Auto Mode,"Jan 15, 2025",5.5 km/l,8734 kg,215 km,6.7 hrs,Pune,Pune,2 hr 30 mins,"Mar 15, 2025","Apr 10, 2025",All systems normal ✅
-Truck_106,All-Weather (ID: T_986),111 PSI,Average,Auto Mode,"Jan 16, 2025",5.9 km/l,8875 kg,198 km,4.8 hrs,Navi Mumbai,Pune,2 hr 25 mins,"Mar 16, 2025","Apr 11, 2025",Low pressure alert ⚠️
-Truck_107,All-Weather (ID: T_987),103 PSI,Good,Auto Mode,"Jan 17, 2025",5.9 km/l,8863 kg,238 km,6.8 hrs,Haryana,Pune,2 hr 45 mins,"Mar 17, 2025","Apr 12, 2025",Low pressure alert ⚠️
-Truck_108,All-Weather (ID: T_988),109 PSI,Good,Auto Mode,"Jan 18, 2025",5.1 km/l,8742 kg,213 km,5.9 hrs,Pune,Pune,1 hr 55 mins,"Mar 18, 2025","Apr 13, 2025",All systems normal ✅
-Truck_109,All-Weather (ID: T_989),102 PSI,Worn,Auto Mode,"Jan 19, 2025",5.1 km/l,8256 kg,238 km,6.4 hrs,Navi Mumbai,Pune,1 hr 25 mins,"Mar 19, 2025","Apr 14, 2025",All systems normal ✅
-Truck_110,All-Weather (ID: T_990),102 PSI,Average,Auto Mode,"Jan 20, 2025",5.9 km/l,8370 kg,214 km,6.9 hrs,Haryana,Pune,1 hr 45 mins,"Mar 20, 2025","Apr 15, 2025",All systems normal ✅
-Truck_111,All-Weather (ID: T_991),120 PSI,Worn,Auto Mode,"Jan 21, 2025",5.0 km/l,8958 kg,208 km,5.7 hrs,Pune,Pune,2 hr 15 mins,"Mar 21, 2025","Apr 16, 2025",Service overdue ❌
-Truck_112,All-Weather (ID: T_992),104 PSI,Worn,Auto Mode,"Jan 22, 2025",4.7 km/l,8310 kg,219 km,6.6 hrs,Navi Mumbai,Pune,2 hr 25 mins,"Mar 22, 2025","Apr 17, 2025",Low pressure alert ⚠️
-Truck_113,All-Weather (ID: T_993),104 PSI,Good,Auto Mode,"Jan 23, 2025",5.7 km/l,8186 kg,246 km,5.1 hrs,Haryana,Pune,1 hr 15 mins,"Mar 23, 2025","Apr 18, 2025",All systems normal ✅
-Truck_114,All-Weather (ID: T_994),110 PSI,Good,Auto Mode,"Jan 24, 2025",5.1 km/l,8956 kg,237 km,4.9 hrs,Pune,Pune,1 hr 25 mins,"Mar 24, 2025","Apr 19, 2025",All systems normal ✅
+Truck_200,All-Terrain (ID: T_1000),104 PSI,Worn,Auto Inflation Only,"Jan 10, 2025",4.6 km/l,8522 kg,260 km,5.9 hrs,Navi Mumbai,Pune,1 hr 50 mins,"Mar 10, 2025","Apr 05, 2025",Service overdue ❌
+Truck_201,All-Terrain (ID: T_1001),105 PSI,Good,Auto Inflation Only,"Jan 11, 2025",5.0 km/l,8861 kg,229 km,6.6 hrs,Haryana,Pune,2 hr 15 mins,"Mar 11, 2025","Apr 06, 2025",Low pressure alert ⚠️
+Truck_202,All-Terrain (ID: T_1002),114 PSI,Good,Auto Inflation Only,"Jan 12, 2025",4.9 km/l,8113 kg,212 km,6.1 hrs,Pune,Pune,1 hr 30 mins,"Mar 12, 2025","Apr 07, 2025",Low pressure alert ⚠️
+Truck_203,All-Terrain (ID: T_1003),112 PSI,Good,Auto Inflation Only,"Jan 13, 2025",6.2 km/l,8401 kg,260 km,6.4 hrs,Navi Mumbai,Pune,2 hr 15 mins,"Mar 13, 2025","Apr 08, 2025",Low pressure alert ⚠️
+Truck_204,All-Terrain (ID: T_1004),118 PSI,Good,Auto Inflation Only,"Jan 14, 2025",5.6 km/l,8460 kg,205 km,7.2 hrs,Haryana,Pune,1 hr 50 mins,"Mar 14, 2025","Apr 09, 2025",Low pressure alert ⚠️
+Truck_205,All-Terrain (ID: T_1005),110 PSI,Average,Inflation & Deflation,"Jan 15, 2025",5.5 km/l,8409 kg,222 km,7.1 hrs,Pune,Pune,1 hr 50 mins,"Mar 15, 2025","Apr 10, 2025",Low pressure alert ⚠️
+Truck_206,All-Terrain (ID: T_1006),109 PSI,Worn,Auto Inflation Only,"Jan 16, 2025",6.0 km/l,8670 kg,238 km,5.9 hrs,Navi Mumbai,Pune,1 hr 30 mins,"Mar 16, 2025","Apr 11, 2025",Service overdue ❌
+Truck_207,All-Terrain (ID: T_1007),109 PSI,Average,Auto Inflation Only,"Jan 17, 2025",5.5 km/l,8289 kg,197 km,5.6 hrs,Haryana,Pune,2 hr 30 mins,"Mar 17, 2025","Apr 12, 2025",All systems normal ✅
+Truck_208,All-Terrain (ID: T_1008),107 PSI,Good,Manual,"Jan 18, 2025",4.7 km/l,8467 kg,251 km,5.9 hrs,Pune,Pune,2 hr 45 mins,"Mar 18, 2025","Apr 13, 2025",Service overdue ❌
+Truck_209,All-Terrain (ID: T_1009),119 PSI,Good,Inflation & Deflation,"Jan 19, 2025",5.9 km/l,8169 kg,250 km,5.1 hrs,Navi Mumbai,Pune,1 hr 45 mins,"Mar 19, 2025","Apr 14, 2025",Low pressure alert ⚠️
+Truck_210,All-Terrain (ID: T_1010),107 PSI,Average,Manual,"Jan 20, 2025",5.5 km/l,7894 kg,239 km,7.4 hrs,Haryana,Pune,2 hr 50 mins,"Mar 20, 2025","Apr 15, 2025",All systems normal ✅
+Truck_211,All-Terrain (ID: T_1011),115 PSI,Worn,Inflation & Deflation,"Jan 21, 2025",4.5 km/l,8382 kg,216 km,6.7 hrs,Pune,Pune,1 hr 45 mins,"Mar 21, 2025","Apr 16, 2025",Service overdue ❌
+Truck_212,All-Terrain (ID: T_1012),106 PSI,Good,Manual,"Jan 22, 2025",4.6 km/l,7505 kg,244 km,5.8 hrs,Navi Mumbai,Pune,1 hr 50 mins,"Mar 22, 2025","Apr 17, 2025",All systems normal ✅
+Truck_213,All-Terrain (ID: T_1013),103 PSI,Good,Auto Inflation Only,"Jan 23, 2025",5.0 km/l,8258 kg,192 km,4.8 hrs,Haryana,Pune,2 hr 30 mins,"Mar 23, 2025","Apr 18, 2025",Service overdue ❌
+Truck_214,All-Terrain (ID: T_1014),101 PSI,Good,Manual,"Jan 24, 2025",5.1 km/l,7696 kg,244 km,7.2 hrs,Pune,Pune,1 hr 30 mins,"Mar 24, 2025","Apr 19, 2025",Service overdue ❌
