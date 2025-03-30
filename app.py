@@ -46,6 +46,8 @@ def bot():
 
             truck_list = "\n".join([f"{i+1}. {truck}" for i, truck in enumerate(trucks)])
             msg.body(f"🚛 Trucks in *{location}*:\n\n{truck_list}\n\nType the number to view details.\nType 'back' to change location.")
+            print("🧠 Location selected:", location)
+            print("📊 Trucks found:", trucks)
         except:
             msg.body("❌ Invalid input. Please type a number from the list.")
         return str(resp)
@@ -79,7 +81,6 @@ def bot():
             msg.body("❌ Invalid input. Please type a valid number.\nOr type 'back' to go back.")
         return str(resp)
 
-    # If step is done but user types something else
     msg.body("🔁 Type *start* to begin or *back* to go back.")
     return str(resp)
 
