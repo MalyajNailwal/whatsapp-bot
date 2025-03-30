@@ -1,11 +1,11 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import pandas as pd
-import os  # ✅ Fix for Render deployment
+import os  # ✅ Required for Render
 
 app = Flask(__name__)
 
-# Load CSV + strip column names
+# Load tire data
 df = pd.read_csv("tire_data.csv")
 df.columns = df.columns.str.strip()
 
@@ -19,10 +19,17 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
 
-    if user_number not in user_sessions:
+    # Handle broken sessions
+    if user_number not in user_sessions or "step" not in user_sessions[user_number]:
         user_sessions[user_number] = {"step": "start"}
 
     session = user_sessions[user_number]
+
+    # 🔁 Universal Restart
+    if incoming_msg == "restart":
+        user_sessions[user_number] = {"step": "start"}
+        msg.body("🔄 Session restarted. Type *start* to begin again.")
+        return str(resp)
 
     # Handle 'start' command
     if incoming_msg == "start":
@@ -33,7 +40,8 @@ def bot():
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
             f"📍 *Select a Location:*\n\n{location_list}\n\n"
-            f"✍️ _Reply with the number (e.g., 1)_"
+            f"✍️ _Reply with the number (e.g., 1)_\n"
+            f"🔁 _Type 'restart' anytime to reset._"
         )
         return str(resp)
 
@@ -44,11 +52,12 @@ def bot():
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
             f"🔙 *Back to Location Selection:*\n\n{location_list}\n\n"
-            f"✍️ _Reply with the number (e.g., 1)_"
+            f"✍️ _Reply with the number (e.g., 1)_\n"
+            f"🔁 _Type 'restart' to reset._"
         )
         return str(resp)
 
-    # Location selected
+    # Step 1: User chooses location
     if session["step"] == "choose_location":
         try:
             index = int(incoming_msg) - 1
@@ -63,13 +72,13 @@ def bot():
             msg.body(
                 f"🚛 *Trucks in {location}:*\n\n{truck_list}\n\n"
                 f"✍️ _Reply with the number to view details._\n"
-                f"🔁 _Type 'back' to change location._"
+                f"🔁 _Type 'back' to change location or 'restart' to reset._"
             )
         except:
-            msg.body("❌ Invalid input. Please type a valid number (e.g., 1).")
+            msg.body("❌ Invalid input. Please type a valid number (e.g., 1).\n🔁 Or type 'restart' to reset.")
         return str(resp)
 
-    # Vehicle selected
+    # Step 2: User chooses vehicle
     if session["step"] == "choose_vehicle":
         try:
             index = int(incoming_msg) - 1
@@ -94,15 +103,15 @@ def bot():
                 f"🗓️ Next Service Due: {row['Next Service']}\n"
                 f"💬 Status: {row['Status']}"
             )
-            msg.body(detail + "\n\n🔁 *Type 'back'* to view another truck or location.")
+            msg.body(detail + "\n\n🔁 _Type 'back' to go back or 'restart' to reset._")
         except:
-            msg.body("❌ Invalid input. Please type a valid number.\nOr type 'back' to go back.")
+            msg.body("❌ Invalid input. Please type a valid number.\n🔁 Or type 'restart' to reset.")
         return str(resp)
 
     # Fallback
-    msg.body("❓ I didn’t get that.\nType *start* to begin or *back* to go back.")
+    msg.body("❓ I didn’t get that.\nType *start* to begin, *back* to go back, or *restart* to reset.")
     return str(resp)
 
-# ✅ Render fix: use the dynamic PORT
+# Render fix
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
