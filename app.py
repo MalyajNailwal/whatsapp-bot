@@ -1,7 +1,7 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import pandas as pd
-import os  # ✅ Required for Render
+import os
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ app = Flask(__name__)
 df = pd.read_csv("tire_data.csv")
 df.columns = df.columns.str.strip()
 
-# Store user session info
+# User sessions
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
@@ -19,19 +19,26 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
 
-    # Handle broken sessions
-    if user_number not in user_sessions or "step" not in user_sessions[user_number]:
+    if user_number not in user_sessions:
         user_sessions[user_number] = {"step": "start"}
 
     session = user_sessions[user_number]
 
     # 🔁 Universal Restart
     if incoming_msg == "restart":
-        user_sessions[user_number] = {"step": "start"}
-        msg.body("🔄 Session restarted. Type *start* to begin again.")
+        user_sessions[user_number] = {"step": "choose_location"}
+        locations = sorted(df["Location"].unique())
+        user_sessions[user_number]["locations"] = locations
+
+        location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
+        msg.body(
+            f"🔁 *Session restarted successfully!*\n\n"
+            f"📍 *Please select a Location:*\n\n{location_list}\n\n"
+            f"✍️ _Reply with the number (e.g., 1)_"
+        )
         return str(resp)
 
-    # Handle 'start' command
+    # Start
     if incoming_msg == "start":
         session["step"] = "choose_location"
         locations = sorted(df["Location"].unique())
@@ -40,24 +47,22 @@ def bot():
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
             f"📍 *Select a Location:*\n\n{location_list}\n\n"
-            f"✍️ _Reply with the number (e.g., 1)_\n"
-            f"🔁 _Type 'restart' anytime to reset._"
+            f"✍️ _Reply with the number (e.g., 1)_"
         )
         return str(resp)
 
-    # Handle 'back' command
+    # Back
     if incoming_msg == "back":
         session["step"] = "choose_location"
         locations = session.get("locations", sorted(df["Location"].unique()))
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
             f"🔙 *Back to Location Selection:*\n\n{location_list}\n\n"
-            f"✍️ _Reply with the number (e.g., 1)_\n"
-            f"🔁 _Type 'restart' to reset._"
+            f"✍️ _Reply with the number (e.g., 1)_"
         )
         return str(resp)
 
-    # Step 1: User chooses location
+    # Choose location
     if session["step"] == "choose_location":
         try:
             index = int(incoming_msg) - 1
@@ -72,13 +77,13 @@ def bot():
             msg.body(
                 f"🚛 *Trucks in {location}:*\n\n{truck_list}\n\n"
                 f"✍️ _Reply with the number to view details._\n"
-                f"🔁 _Type 'back' to change location or 'restart' to reset._"
+                f"🔁 _Type 'back' to change location._"
             )
         except:
-            msg.body("❌ Invalid input. Please type a valid number (e.g., 1).\n🔁 Or type 'restart' to reset.")
+            msg.body("❌ Invalid input. Please type a valid number (e.g., 1).")
         return str(resp)
 
-    # Step 2: User chooses vehicle
+    # Choose truck
     if session["step"] == "choose_vehicle":
         try:
             index = int(incoming_msg) - 1
@@ -103,15 +108,14 @@ def bot():
                 f"🗓️ Next Service Due: {row['Next Service']}\n"
                 f"💬 Status: {row['Status']}"
             )
-            msg.body(detail + "\n\n🔁 _Type 'back' to go back or 'restart' to reset._")
+            msg.body(detail + "\n\n🔁 *Type 'back'* to view another truck or location.\n🔄 *Type 'restart'* to begin again.")
         except:
-            msg.body("❌ Invalid input. Please type a valid number.\n🔁 Or type 'restart' to reset.")
+            msg.body("❌ Invalid input. Please type a valid number.\nOr type 'back' to go back.")
         return str(resp)
 
     # Fallback
-    msg.body("❓ I didn’t get that.\nType *start* to begin, *back* to go back, or *restart* to reset.")
+    msg.body("❓ I didn’t get that.\nType *start* to begin or *restart* to restart.")
     return str(resp)
 
-# Render fix
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
