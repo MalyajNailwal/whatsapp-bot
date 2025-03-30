@@ -4,11 +4,11 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# ✅ Load CSV and strip any leading/trailing spaces in headers
+# Load CSV + strip column names
 df = pd.read_csv("tire_data.csv")
 df.columns = df.columns.str.strip()
 
-# To track user sessions
+# Store user session info
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
@@ -18,30 +18,36 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
 
-    # Session initialization
     if user_number not in user_sessions:
         user_sessions[user_number] = {"step": "start"}
 
     session = user_sessions[user_number]
 
-    # START command
+    # Handle 'start' command (any case)
     if incoming_msg == "start":
         session["step"] = "choose_location"
         locations = sorted(df["Location"].unique())
         session["locations"] = locations
+
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
-        msg.body(f"📍 Please choose a location:\n\n{location_list}\n\nType the number (e.g., 1)")
+        msg.body(
+            f"📍 *Select a Location:*\n\n{location_list}\n\n"
+            f"✍️ _Reply with the number (e.g., 1)_"
+        )
         return str(resp)
 
-    # BACK command
+    # Handle 'back' command (any case)
     if incoming_msg == "back":
         session["step"] = "choose_location"
-        locations = session["locations"]
+        locations = session.get("locations", sorted(df["Location"].unique()))
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
-        msg.body(f"📍 Back to location selection:\n\n{location_list}\n\nType the number (e.g., 1)")
+        msg.body(
+            f"🔙 *Back to Location Selection:*\n\n{location_list}\n\n"
+            f"✍️ _Reply with the number (e.g., 1)_"
+        )
         return str(resp)
 
-    # Choose location
+    # Location selected
     if session["step"] == "choose_location":
         try:
             index = int(incoming_msg) - 1
@@ -53,14 +59,16 @@ def bot():
             session["trucks"] = trucks
 
             truck_list = "\n".join([f"{i+1}. {truck}" for i, truck in enumerate(trucks)])
-            msg.body(f"🚛 Trucks in *{location}*:\n\n{truck_list}\n\nType the number to view details.\nType 'back' to change location.")
-            print("🧠 Location selected:", location)
-            print("📊 Trucks found:", trucks)
+            msg.body(
+                f"🚛 *Trucks in {location}:*\n\n{truck_list}\n\n"
+                f"✍️ _Reply with the number to view details._\n"
+                f"🔁 _Type 'back' to change location._"
+            )
         except:
-            msg.body("❌ Invalid input. Please type a number from the list.")
+            msg.body("❌ Invalid input. Please type a valid number (e.g., 1).")
         return str(resp)
 
-    # Choose truck
+    # Vehicle selected
     if session["step"] == "choose_vehicle":
         try:
             index = int(incoming_msg) - 1
@@ -85,13 +93,13 @@ def bot():
                 f"🗓️ Next Service Due: {row['Next Service']}\n"
                 f"💬 Status: {row['Status']}"
             )
-            msg.body(detail + "\n\n🔁 Type 'back' to choose another truck or location.")
+            msg.body(detail + "\n\n🔁 *Type 'back'* to view another truck or location.")
         except:
             msg.body("❌ Invalid input. Please type a valid number.\nOr type 'back' to go back.")
         return str(resp)
 
     # Default fallback
-    msg.body("🔁 Type *start* to begin or *back* to go back.")
+    msg.body("❓ I didn’t get that.\nType *start* to begin or *back* to go back.")
     return str(resp)
 
 if __name__ == "__main__":
