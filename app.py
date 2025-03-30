@@ -4,7 +4,11 @@ import pandas as pd
 
 app = Flask(__name__)
 
+# ✅ Load CSV and strip any leading/trailing spaces in headers
 df = pd.read_csv("tire_data.csv")
+df.columns = df.columns.str.strip()
+
+# To track user sessions
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
@@ -14,11 +18,13 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
 
+    # Session initialization
     if user_number not in user_sessions:
         user_sessions[user_number] = {"step": "start"}
 
     session = user_sessions[user_number]
 
+    # START command
     if incoming_msg == "start":
         session["step"] = "choose_location"
         locations = sorted(df["Location"].unique())
@@ -27,6 +33,7 @@ def bot():
         msg.body(f"📍 Please choose a location:\n\n{location_list}\n\nType the number (e.g., 1)")
         return str(resp)
 
+    # BACK command
     if incoming_msg == "back":
         session["step"] = "choose_location"
         locations = session["locations"]
@@ -34,6 +41,7 @@ def bot():
         msg.body(f"📍 Back to location selection:\n\n{location_list}\n\nType the number (e.g., 1)")
         return str(resp)
 
+    # Choose location
     if session["step"] == "choose_location":
         try:
             index = int(incoming_msg) - 1
@@ -52,6 +60,7 @@ def bot():
             msg.body("❌ Invalid input. Please type a number from the list.")
         return str(resp)
 
+    # Choose truck
     if session["step"] == "choose_vehicle":
         try:
             index = int(incoming_msg) - 1
@@ -81,6 +90,7 @@ def bot():
             msg.body("❌ Invalid input. Please type a valid number.\nOr type 'back' to go back.")
         return str(resp)
 
+    # Default fallback
     msg.body("🔁 Type *start* to begin or *back* to go back.")
     return str(resp)
 
