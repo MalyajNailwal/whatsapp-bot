@@ -1,6 +1,7 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 import pandas as pd
+import os  # ✅ Fix for Render deployment
 
 app = Flask(__name__)
 
@@ -23,7 +24,7 @@ def bot():
 
     session = user_sessions[user_number]
 
-    # Handle 'start' command (any case)
+    # Handle 'start' command
     if incoming_msg == "start":
         session["step"] = "choose_location"
         locations = sorted(df["Location"].unique())
@@ -36,7 +37,7 @@ def bot():
         )
         return str(resp)
 
-    # Handle 'back' command (any case)
+    # Handle 'back' command
     if incoming_msg == "back":
         session["step"] = "choose_location"
         locations = session.get("locations", sorted(df["Location"].unique()))
@@ -98,9 +99,10 @@ def bot():
             msg.body("❌ Invalid input. Please type a valid number.\nOr type 'back' to go back.")
         return str(resp)
 
-    # Default fallback
+    # Fallback
     msg.body("❓ I didn’t get that.\nType *start* to begin or *back* to go back.")
     return str(resp)
 
+# ✅ Render fix: use the dynamic PORT
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
