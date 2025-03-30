@@ -4,10 +4,10 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Load the tire data
-df = pd.read_csv("movies_data.csv")  # using the tire data renamed to this
+# Load the tire data file
+df = pd.read_csv("tire_data.csv")
 
-# In-memory session state
+# Session storage
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
@@ -18,20 +18,21 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
 
-    # First-time user setup
+    # Set up new user session if not exists
     if user_number not in user_sessions:
         user_sessions[user_number] = {"active": True}
 
     session = user_sessions[user_number]
 
+    # Exit flow
     if incoming_msg == "exit":
         session["active"] = False
-        msg.body("👋 Session ended. Type 'start' anytime to begin again.")
+        msg.body("👋 Session ended. Type 'start' to begin again.")
         return str(resp)
 
+    # Start flow
     if incoming_msg == "start":
         session["active"] = True
-        # Format and show tire data
         replies = []
         for _, row in df.iterrows():
             report = (
@@ -42,7 +43,7 @@ def bot():
                 f"📅 Installed: {row['Installed']}\n\n"
                 f"⛽ Fuel Efficiency: {row['Fuel Efficiency']}\n"
                 f"🚛 Load: {row['Load']}\n"
-                f"🛣️ Distance Covered Today: {row['Distance Today']}\n"
+                f"🛣️ Distance Today: {row['Distance Today']}\n"
                 f"🕒 Engine Hours: {row['Engine Hours']}\n\n"
                 f"📌 Current Location: {row['Location']}\n"
                 f"📍 Heading To: {row['Heading To']}\n"
@@ -54,16 +55,16 @@ def bot():
             replies.append(report)
 
         full_reply = "\n------------------------\n".join(replies)
-        msg.body(full_reply[:1600])  # SMS/WhatsApp limit
+        msg.body(full_reply[:1600])  # WhatsApp limit
         msg.body("✅ Type *exit* to stop or *start* again to reload reports.")
         return str(resp)
 
-    # If not started yet
+    # If user already exited
     if not session.get("active", False):
-        return ("", 204)  # No reply
+        return ("", 204)
 
-    # If message doesn't match any known command
-    msg.body("⚙️ Type *start* to begin or *exit* to stop.")
+    # If invalid input
+    msg.body("⚙️ Invalid input. Type *start* to begin or *exit* to stop.")
     return str(resp)
 
 if __name__ == "__main__":
