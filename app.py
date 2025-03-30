@@ -4,10 +4,10 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Load the tire data file
+# Load tire data
 df = pd.read_csv("tire_data.csv")
 
-# Session storage
+# In-memory session storage
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
@@ -15,26 +15,31 @@ def bot():
     user_number = request.form.get("From", "")
     incoming_msg = request.form.get("Body", "").strip().lower()
 
+    print("📥 FROM:", user_number)
+    print("💬 MSG:", incoming_msg)
+
     resp = MessagingResponse()
     msg = resp.message()
 
-    # Set up new user session if not exists
+    # New session
     if user_number not in user_sessions:
         user_sessions[user_number] = {"active": True}
 
     session = user_sessions[user_number]
 
-    # Exit flow
+    # Exit command
     if incoming_msg == "exit":
         session["active"] = False
-        msg.body("👋 Session ended. Type 'start' to begin again.")
+        msg.body("👋 Session ended. Type *start* anytime to begin again.")
+        print("📤 Sending: Session ended message")
         return str(resp)
 
-    # Start flow
+    # Start command
     if incoming_msg == "start":
         session["active"] = True
+
         replies = []
-        for _, row in df.iterrows():
+        for _, row in df.head(2).iterrows():  # only send 2 for now
             report = (
                 f"📍 *{row['Truck']} Status Report*\n\n"
                 f"🛞 *Tire:* {row['Tire']}\n"
@@ -55,16 +60,21 @@ def bot():
             replies.append(report)
 
         full_reply = "\n------------------------\n".join(replies)
-        msg.body(full_reply[:1600])  # WhatsApp limit
+        print("📤 Sending tire report:")
+        print(full_reply[:100] + "...")  # show start of message in logs
+
+        msg.body(full_reply[:1600])  # cap it under WhatsApp limit
         msg.body("✅ Type *exit* to stop or *start* again to reload reports.")
         return str(resp)
 
-    # If user already exited
+    # If session is inactive
     if not session.get("active", False):
+        print("🚫 Inactive session - no reply sent")
         return ("", 204)
 
-    # If invalid input
+    # Invalid command
     msg.body("⚙️ Invalid input. Type *start* to begin or *exit* to stop.")
+    print("📤 Sending: Invalid input message")
     return str(resp)
 
 if __name__ == "__main__":
