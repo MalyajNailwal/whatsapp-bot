@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 
-# Load tire data
+# Load the tire dataset
 try:
     df = pd.read_csv("tire_data.csv")
     df.columns = df.columns.str.strip()
@@ -14,7 +14,7 @@ except Exception as e:
     print("❌ CSV load failed:", e)
     df = pd.DataFrame()
 
-# Store session state
+# Store user sessions in memory
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
@@ -23,17 +23,17 @@ def bot():
         incoming_msg = request.form.get("Body", "").strip()
         user_number = request.form.get("From", "")
         normalized_msg = incoming_msg.lower()
-
-        print(f"📩 From: {user_number} | Message: {incoming_msg}")
+        print(f"📩 From: {user_number} | Message: '{incoming_msg}'")
 
         resp = MessagingResponse()
         msg = resp.message()
 
+        # Initialize session if new user
         if user_number not in user_sessions:
             user_sessions[user_number] = {"step": "start"}
         session = user_sessions[user_number]
 
-        # 🔁 Restart command
+        # 🔁 Restart handler
         if normalized_msg == "restart":
             locations = sorted(df["Location"].unique())
             user_sessions[user_number] = {
@@ -45,12 +45,12 @@ def bot():
             msg.body(
                 f"🔄 *Session restarted!*\n\n"
                 f"📍 *Choose a Location:*\n\n{location_list}\n\n"
-                f"✍️ _Reply with number (e.g., 1)_"
+                f"✍️ Reply with number (e.g., 1)"
             )
-            print("🔄 Restart handled.")
+            print("🔁 Session restarted.")
             return str(resp)
 
-        # ▶️ Start
+        # ▶️ Start flow
         if normalized_msg == "start":
             session["step"] = "choose_location"
             locations = sorted(df["Location"].unique())
@@ -58,25 +58,24 @@ def bot():
             location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
             msg.body(
                 f"📍 *Select a Location:*\n\n{location_list}\n\n"
-                f"✍️ _Reply with number (e.g., 1)_\n🔁 Type 'restart' anytime."
+                f"✍️ Reply with number (e.g., 1)\n🔁 Type 'restart' anytime"
             )
-            print("📍 Location selection sent.")
+            print("📍 Location options sent.")
             return str(resp)
 
         # ⬅️ Back command
         if normalized_msg == "back":
             session["step"] = "choose_location"
             locations = session.get("locations", sorted(df["Location"].unique()))
-            session["locations"] = locations
             location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
             msg.body(
                 f"🔙 *Back to Location Selection:*\n\n{location_list}\n\n"
-                f"✍️ _Reply with number (e.g., 1)_"
+                f"✍️ Reply with number (e.g., 1)"
             )
-            print("⬅️ Back to location handled.")
+            print("⬅️ Back to location.")
             return str(resp)
 
-        # 🧭 Choose Location
+        # 📍 Choose location
         if session.get("step") == "choose_location":
             try:
                 index = int(normalized_msg) - 1
@@ -85,24 +84,26 @@ def bot():
                 session["step"] = "choose_vehicle"
                 trucks = df[df["Location"] == location]["Truck"].tolist()
                 session["trucks"] = trucks
+
                 truck_list = "\n".join([f"{i+1}. {truck}" for i, truck in enumerate(trucks)])
                 msg.body(
                     f"🚛 *Trucks in {location}:*\n\n{truck_list}\n\n"
-                    f"✍️ _Reply with number to view details_\n🔁 Type 'back' to change location"
+                    f"✍️ Reply with number to view details\n🔁 Type 'back' to change location"
                 )
-                print(f"✅ Location '{location}' selected. Trucks listed.")
+                print(f"✅ Location selected: {location}")
             except Exception as e:
-                msg.body("❌ Invalid location number. Try again or type 'restart'.")
+                msg.body("❌ Invalid number. Please try again or type 'restart'.")
                 print("❌ Error choosing location:", e)
             return str(resp)
 
-        # 🚚 Choose Truck
+        # 🚚 Choose truck
         if session.get("step") == "choose_vehicle":
             try:
                 index = int(normalized_msg) - 1
                 truck = session["trucks"][index]
                 session["step"] = "done"
                 row = df[df["Truck"] == truck].iloc[0]
+
                 detail = (
                     f"📍 *{row['Truck']} Status Report*\n\n"
                     f"🛞 *Tire:* {row['Tire']}\n"
@@ -121,22 +122,22 @@ def bot():
                     f"💬 Status: {row['Status']}"
                 )
                 msg.body(detail + "\n\n🔁 Type 'back' or 'restart'")
-                print(f"✅ Truck '{truck}' selected and status sent.")
+                print(f"✅ Truck selected: {truck}")
             except Exception as e:
                 msg.body("❌ Invalid truck number. Try again or type 'restart'.")
-                print("❌ Error choosing truck:", e)
+                print("❌ Error selecting truck:", e)
             return str(resp)
 
-        # Default fallback
+        # 🧭 Fallback message
         msg.body("❓ I didn’t get that. Type *start* to begin or *restart* to reset.")
-        print("⚠️ Unknown input received.")
+        print("⚠️ Unrecognized input.")
         return str(resp)
 
     except Exception as e:
         print("🔥 GLOBAL ERROR:", e)
-        resp.message("⚠️ Unexpected error. Type 'restart' to try again.")
+        resp.message("⚠️ Something went wrong. Type 'restart' to try again.")
         return str(resp)
 
-# Required for Render or Railway
+# Run the app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
