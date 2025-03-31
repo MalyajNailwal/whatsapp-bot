@@ -9,91 +9,94 @@ app = Flask(__name__)
 df = pd.read_csv("tire_data.csv")
 df.columns = df.columns.str.strip()
 
-# Sessions
+# Store session state
 user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
 def bot():
     incoming_msg = request.form.get("Body", "").strip().lower()
     user_number = request.form.get("From", "")
-    print(f"📨 {user_number}: {incoming_msg}")
+    print(f"📩 From: {user_number} | Message: {incoming_msg}")
 
     resp = MessagingResponse()
     msg = resp.message()
 
-    # Set up session
+    # Init session if new user
     if user_number not in user_sessions:
         user_sessions[user_number] = {"step": "start"}
     session = user_sessions[user_number]
 
-    # 🔄 Restart
+    # 🔁 Restart handler — now with fixed session pointer
     if incoming_msg == "restart":
-        locations = sorted(df["Location"].dropna().unique())
+        locations = sorted(df["Location"].unique())
         user_sessions[user_number] = {
             "step": "choose_location",
             "locations": locations
         }
-        session = user_sessions[user_number]
-        loc_text = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
+        session = user_sessions[user_number]  # ✅ Refresh session
+
+        location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
             f"🔄 *Session restarted!*\n\n"
-            f"📍 *Choose a Location:*\n\n{loc_text}\n\n✍️ Reply with a number (e.g., 1)"
+            f"📍 *Choose a Location:*\n\n{location_list}\n\n"
+            f"✍️ _Reply with number (e.g., 1)_"
         )
         return str(resp)
 
-    # ▶️ Start
+    # Start command
     if incoming_msg == "start":
-        locations = sorted(df["Location"].dropna().unique())
         session["step"] = "choose_location"
+        locations = sorted(df["Location"].unique())
         session["locations"] = locations
-        loc_text = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
+        location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
-            f"📍 *Select a Location:*\n\n{loc_text}\n\n✍️ Reply with a number (e.g., 1)"
+            f"📍 *Select a Location:*\n\n{location_list}\n\n"
+            f"✍️ _Reply with number (e.g., 1)_\n🔄 Type 'restart' anytime."
         )
         return str(resp)
 
-    # 🔙 Back
+    # Back command
     if incoming_msg == "back":
-        if "locations" in session:
-            session["step"] = "choose_location"
-            loc_text = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(session["locations"])])
-            msg.body(
-                f"🔙 *Back to Location Selection:*\n\n{loc_text}\n\n✍️ Reply with a number (e.g., 1)"
-            )
-        else:
-            msg.body("⚠️ Session error. Please type *restart* to start over.")
+        session["step"] = "choose_location"
+        locations = session.get("locations", sorted(df["Location"].unique()))
+        location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
+        msg.body(
+            f"🔙 *Back to Location Selection:*\n\n{location_list}\n\n"
+            f"✍️ _Reply with number (e.g., 1)_"
+        )
         return str(resp)
 
-    # 🧭 Choosing location
-    if session.get("step") == "choose_location":
+    # Location selection
+    if session["step"] == "choose_location":
         try:
             index = int(incoming_msg) - 1
             location = session["locations"][index]
             session["selected_location"] = location
             session["step"] = "choose_vehicle"
 
-            trucks = df[df["Location"] == location]["Truck"].dropna().tolist()
+            trucks = df[df["Location"] == location]["Truck"].tolist()
             session["trucks"] = trucks
-            truck_text = "\n".join([f"{i+1}. {t}" for i, t in enumerate(trucks)])
+
+            truck_list = "\n".join([f"{i+1}. {truck}" for i, truck in enumerate(trucks)])
             msg.body(
-                f"🚛 *Trucks in {location}:*\n\n{truck_text}\n\n"
-                f"✍️ Reply with truck number\n🔁 Type 'back' to go back"
+                f"🚛 *Trucks in {location}:*\n\n{truck_list}\n\n"
+                f"✍️ _Reply with number to view details_\n🔁 Type 'back' to change location"
             )
         except:
-            msg.body("❌ Invalid input. Please reply with a valid number.")
+            msg.body("❌ Invalid number. Please try again.\nOr type 'restart' to start fresh.")
         return str(resp)
 
-    # 🚛 Choosing vehicle
-    if session.get("step") == "choose_vehicle":
+    # Truck selection
+    if session["step"] == "choose_vehicle":
         try:
             index = int(incoming_msg) - 1
             truck = session["trucks"][index]
-            row = df[df["Truck"] == truck].iloc[0]
             session["step"] = "done"
 
-            report = (
+            row = df[df["Truck"] == truck].iloc[0]
+            detail = (
                 f"📍 *{row['Truck']} Status Report*\n\n"
-                f"🛞 Tire: {row['Tire']}\n"
+                f"🛞 *Tire:* {row['Tire']}\n"
                 f"🔧 Pressure: {row['Pressure']} | Tread: {row['Tread']}\n"
                 f"⚙️ Inflation System: {row['Inflation System']}\n"
                 f"📅 Installed: {row['Installed']}\n\n"
@@ -108,15 +111,15 @@ def bot():
                 f"🗓️ Next Service: {row['Next Service']}\n"
                 f"💬 Status: {row['Status']}"
             )
-            msg.body(report + "\n\n🔁 Type 'back' or 'restart'")
+            msg.body(detail + "\n\n🔁 Type 'back' or 'restart'")
         except:
-            msg.body("❌ Invalid truck number. Try again or type 'back'.")
+            msg.body("❌ Invalid number. Please try again.\nOr type 'restart'.")
         return str(resp)
 
-    # ❓ Fallback
-    msg.body("❓ I didn’t understand that. Type *start* or *restart* to begin.")
+    # Fallback
+    msg.body("❓ I didn’t get that. Type *start* to begin or *restart* to reset.")
     return str(resp)
 
-# 🔁 Render-compatible runner
+# For Render hosting
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
