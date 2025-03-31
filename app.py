@@ -17,6 +17,10 @@ except Exception as e:
 # Store user sessions in memory
 user_sessions = {}
 
+@app.route("/", methods=["GET"])
+def home():
+    return "👋 Bot is up and running!"
+
 @app.route("/bot", methods=["POST"])
 def bot():
     try:
@@ -28,14 +32,14 @@ def bot():
         resp = MessagingResponse()
         msg = resp.message()
 
-        # Initialize session if new user
+        # Initialize session
         if user_number not in user_sessions:
             user_sessions[user_number] = {"step": "start"}
         session = user_sessions[user_number]
 
-        # 🔁 Restart handler
+        # 🔁 Restart
         if normalized_msg == "restart":
-            locations = sorted(df["Location"].unique())
+            locations = sorted(df["Location"].dropna().unique())
             user_sessions[user_number] = {
                 "step": "choose_location",
                 "locations": locations
@@ -47,32 +51,30 @@ def bot():
                 f"📍 *Choose a Location:*\n\n{location_list}\n\n"
                 f"✍️ Reply with number (e.g., 1)"
             )
-            print("🔁 Session restarted.")
             return str(resp)
 
-        # ▶️ Start flow
+        # ▶️ Start
         if normalized_msg == "start":
             session["step"] = "choose_location"
-            locations = sorted(df["Location"].unique())
+            locations = sorted(df["Location"].dropna().unique())
             session["locations"] = locations
             location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
             msg.body(
                 f"📍 *Select a Location:*\n\n{location_list}\n\n"
                 f"✍️ Reply with number (e.g., 1)\n🔁 Type 'restart' anytime"
             )
-            print("📍 Location options sent.")
             return str(resp)
 
-        # ⬅️ Back command
+        # ⬅️ Back
         if normalized_msg == "back":
             session["step"] = "choose_location"
-            locations = session.get("locations", sorted(df["Location"].unique()))
+            locations = session.get("locations", sorted(df["Location"].dropna().unique()))
+            session["locations"] = locations
             location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
             msg.body(
                 f"🔙 *Back to Location Selection:*\n\n{location_list}\n\n"
                 f"✍️ Reply with number (e.g., 1)"
             )
-            print("⬅️ Back to location.")
             return str(resp)
 
         # 📍 Choose location
@@ -84,13 +86,11 @@ def bot():
                 session["step"] = "choose_vehicle"
                 trucks = df[df["Location"] == location]["Truck"].tolist()
                 session["trucks"] = trucks
-
                 truck_list = "\n".join([f"{i+1}. {truck}" for i, truck in enumerate(trucks)])
                 msg.body(
                     f"🚛 *Trucks in {location}:*\n\n{truck_list}\n\n"
                     f"✍️ Reply with number to view details\n🔁 Type 'back' to change location"
                 )
-                print(f"✅ Location selected: {location}")
             except Exception as e:
                 msg.body("❌ Invalid number. Please try again or type 'restart'.")
                 print("❌ Error choosing location:", e)
@@ -122,15 +122,13 @@ def bot():
                     f"💬 Status: {row['Status']}"
                 )
                 msg.body(detail + "\n\n🔁 Type 'back' or 'restart'")
-                print(f"✅ Truck selected: {truck}")
             except Exception as e:
                 msg.body("❌ Invalid truck number. Try again or type 'restart'.")
                 print("❌ Error selecting truck:", e)
             return str(resp)
 
-        # 🧭 Fallback message
+        # Fallback
         msg.body("❓ I didn’t get that. Type *start* to begin or *restart* to reset.")
-        print("⚠️ Unrecognized input.")
         return str(resp)
 
     except Exception as e:
@@ -138,6 +136,6 @@ def bot():
         resp.message("⚠️ Something went wrong. Type 'restart' to try again.")
         return str(resp)
 
-# Run the app
+# Run the app on Render
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
