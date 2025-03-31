@@ -14,7 +14,6 @@ user_sessions = {}
 
 @app.route("/bot", methods=["POST"])
 def bot():
-    # Twilio sends data as FORM
     incoming_msg = request.form.get("Body", "").strip().lower()
     user_number = request.form.get("From", "")
     print(f"📩 From: {user_number} | Message: {incoming_msg}")
@@ -22,16 +21,20 @@ def bot():
     resp = MessagingResponse()
     msg = resp.message()
 
-    # Init session
+    # Init session if new user
     if user_number not in user_sessions:
         user_sessions[user_number] = {"step": "start"}
     session = user_sessions[user_number]
 
-    # 🔁 Restart handler
+    # 🔁 Restart handler — now with fixed session pointer
     if incoming_msg == "restart":
-        user_sessions[user_number] = {"step": "choose_location"}
         locations = sorted(df["Location"].unique())
-        user_sessions[user_number]["locations"] = locations
+        user_sessions[user_number] = {
+            "step": "choose_location",
+            "locations": locations
+        }
+        session = user_sessions[user_number]  # ✅ Refresh session
+
         location_list = "\n".join([f"{i+1}. {loc}" for i, loc in enumerate(locations)])
         msg.body(
             f"🔄 *Session restarted!*\n\n"
