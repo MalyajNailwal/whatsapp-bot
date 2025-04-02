@@ -1,9 +1,8 @@
 # 🎬 WhatsApp Movie Info Bot
 
-A cloud-deployed WhatsApp bot built with Python, Flask, Twilio, and Render. It responds with movie information (director, genre, year, synopsis) when you send a movie title via WhatsApp.
-
+A cloud-deployed WhatsApp bot built with Python, Flask, Twilio, and Render. When you send a truck title via WhatsApp, it responds with truck information.
 ## 🚀 Features
-- 💬 Chat on WhatsApp to search any movie
+- 💬 Chat on WhatsApp to search any truck_detail
 - 🔍 Data comes from movies_data.csv
 - 📲 Instant replies with movie details
 - ☁️ Hosted on Render with public webhook
@@ -60,15 +59,15 @@ https://your-bot.onrender.com/bot (method = POST)
 ## 🔄 How to Update Movie Data
 
 Option 1 (Manual):
-- Replace movies_data.csv with new data
+- Replace tire_data.csv with new data
 - Run:
-git add movies_data.csv
+git add tire_data.csv
 git commit -m "update movie list"
 git push
 
 Option 2 (Live CSV URL):
 - Replace:
-pd.read_csv("movies_data.csv")
+pd.read_csv("tire_data.csv")
 - With:
 pd.read_csv("https://your-live-data-link.com/movies.csv")
 
@@ -83,19 +82,16 @@ pd.read_csv("https://your-live-data-link.com/movies.csv")
 ## 💬 Example WhatsApp Interaction
 
 You send:
-The Shining
+your_truck_name
 
 You receive:
-*The Shining* (1980)
-Directed by: Stanley Kubrick
-Genre: Horror
-Synopsis: A family heads to an isolated hotel where a sinister presence influences the father.
+**All info**
 
 ## 📁 Folder Structure
 
 whatsapp-bot/
 ├── app.py
-├── movies_data.csv
+├── tire_data.csv
 ├── requirements.txt
 ├── README.md
 
